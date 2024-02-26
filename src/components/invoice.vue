@@ -230,7 +230,14 @@ img {
 .table.sub-total input {
   text-align: end;
 }
-tr {
-  border: 0;
+ tr, td, th {
+  border: 0px;
+}
+
+.form-control {
+  box-shadow: none;
+}
+input:focus, textarea:focus {
+  border: 1px solid green;
 }
 </style>
