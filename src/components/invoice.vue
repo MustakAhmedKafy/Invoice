@@ -1,5 +1,29 @@
 <script setup>
+import { reactive } from "vue";
 const invoiceLogo = "/invoice.jpg";
+
+const data = reactive({
+  sender: "",
+  billTo: "",
+  shipTo: "",
+  invoiceNumber: "",
+  date: "",
+  dueDate: "",
+  additionalNote: "",
+  items: [
+    {
+      description: "",
+      quantity: "",
+      rate: "",
+      amount: "",
+    },
+  ],
+  notes: "",
+  terms: "",
+  subtotal: "",
+  tax: "",
+  total: "",
+});
 </script>
 <template>
   <section class="invoice bg-light py-5">
@@ -9,41 +33,26 @@ const invoiceLogo = "/invoice.jpg";
           <img :src="invoiceLogo" alt="" />
           <div class="row">
             <div class="col-md-5">
-              <input
-                type="text"
-                class="form-control mb-3"
-                placeholder="who is invoice from? (required)"
-              />
+              <Label>Sender</Label>
+              <input v-model="data.sender" type="text" class="form-control mb-3" />
             </div>
           </div>
           <div class="row">
             <div class="col-md-5 mb-3">
               <label for="">Bill to</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="who is invoice to? (required)"
-              />
+              <input v-model="data.billTo" type="text" class="form-control" />
             </div>
             <div class="col-md-5">
-              <input
-                type="text"
-                class="form-control mt-4"
-                placeholder="Optional"
-              />
+              <label for="">Ship to</label>
+              <input v-model="data.shipTo" type="text" class="form-control" />
             </div>
           </div>
         </div>
         <div class="col-md-3">
           <h1>Invoice</h1>
-          <div class="input-group mb-3">
-            <span class="input-group-text" id="basic-addon1">#</span>
-            <input
-              type="text"
-              class="form-control"
-              aria-describedby="basic-addon1"
-            />
-          </div>
+            <div class="mb-3">
+              <input v-model="data.invoiceNumber" type="text" class="form-control">
+            </div>
           <div class="input-group mb-3">
             <span
               class="input-group-text bg-transparent border-0"
@@ -52,22 +61,12 @@ const invoiceLogo = "/invoice.jpg";
             >
             <input
               type="date"
+              v-model="data.date"
               class="form-control rounded"
               aria-describedby="basic-addon1"
             />
           </div>
-          <div class="input-group mb-3">
-            <span
-              class="input-group-text bg-transparent border-0"
-              id="basic-addon1"
-              >Payment Terms</span
-            >
-            <input
-              type="text"
-              class="form-control rounded"
-              aria-describedby="basic-addon1"
-            />
-          </div>
+
           <div class="input-group mb-3">
             <span
               class="input-group-text bg-transparent border-0"
@@ -75,6 +74,7 @@ const invoiceLogo = "/invoice.jpg";
               >Due Date</span
             >
             <input
+            v-model="data.dueDate"
               type="date"
               class="form-control rounded"
               aria-describedby="basic-addon1"
@@ -84,9 +84,10 @@ const invoiceLogo = "/invoice.jpg";
             <span
               class="input-group-text bg-transparent border-0"
               id="basic-addon1"
-              >PO Number</span
+              >Additional Note</span
             >
             <input
+            v-model="data.additionalNote"
               type="text"
               class="form-control rounded"
               aria-describedby="basic-addon1"
@@ -127,36 +128,32 @@ const invoiceLogo = "/invoice.jpg";
                 aria-describedby="basic-addon1"
               />
             </td>
-            <td>
-              <input
-                type="text"
-                class="form-control"
-                aria-describedby="basic-addon1"
-              />
-            </td>
+            <td>$0.00</td>
           </tr>
         </tbody>
       </table>
       <button class="btn btn-success ms-2">+ Line Add</button>
+
+<div class="py-5">
+  <p>{{ data }}</p>
+</div>
 
       <div class="row">
         <div class="col-md-8">
           <div class="terms mt-5">
             <label for="">Notes</label>
             <textarea
+            v-model="data.notes"
               name="message"
               class="form-control w-75 mb-3"
               rows="2"
-              placeholder="Notes - any relevant information not already covered"
-              data-v-00bf26c8=""
             ></textarea>
             <label for="">Terms</label>
             <textarea
+            v-model="data.terms"
               name="message"
               class="form-control w-75 mb-3"
               rows="2"
-              placeholder="Terms and conditions - late fees, payment methods, delivery schedule"
-              data-v-00bf26c8=""
             ></textarea>
           </div>
         </div>
@@ -164,51 +161,40 @@ const invoiceLogo = "/invoice.jpg";
           <table class="table sub-total">
             <tbody>
               <tr>
-                <th scope="col">Sub Total</th>
-                <td>$0.00</td>
+                <th scope="col">SubTotal</th>
+                <td>
+                  <input
+                    type="text"
+                    class="form-control"
+                    aria-describedby="basic-addon1"
+                    placeholder="SubTotal"
+                  />
+                </td>
               </tr>
-
               <tr>
                 <th scope="col">Tax</th>
                 <td>
                   <input
-                    type="text"
+                  v-model="data.tax"
+                    type="number"
                     class="form-control"
                     aria-describedby="basic-addon1"
                     value="0%"
                   />
                 </td>
               </tr>
-
-              <tr>
-                <th scope="col"></th>
-                <td>
-                  <a href="" class="me-4">+Discount </a>
-                  <a href="">+Shipping </a>
-                </td>
-              </tr>
-
               <tr>
                 <th scope="col">Total</th>
-                <td>$0.00</td>
-              </tr>
-
-              <tr>
-                <th scope="col">Amount Paid</th>
                 <td>
                   <input
                     type="text"
                     class="form-control"
                     aria-describedby="basic-addon1"
-                    value="0%"
+                    placeholder="Total"
                   />
                 </td>
               </tr>
-
-              <tr>
-                <th scope="col">Sub Total</th>
-                <td>$0.00</td>
-              </tr>
+             
             </tbody>
           </table>
         </div>
@@ -230,14 +216,17 @@ img {
 .table.sub-total input {
   text-align: end;
 }
- tr, td, th {
+tr,
+td,
+th {
   border: 0px;
 }
 
 .form-control {
   box-shadow: none;
 }
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   border: 1px solid green;
 }
 </style>
