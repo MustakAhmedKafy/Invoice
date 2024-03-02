@@ -18,12 +18,46 @@ const data = reactive({
       amount: "",
     },
   ],
+  items: [
+    {
+      description: "",
+      quantity: "",
+      rate: "",
+      amount: "",
+    },
+  ],
   notes: "",
   terms: "",
   subtotal: "",
   tax: "",
   total: "",
 });
+
+// add more item
+function addMoreItem() {
+  data.items.push({
+    description: "",
+    quantity: "",
+    rate: "",
+    amount: "",
+  });
+}
+
+// subtotal
+function getSubTotal() {
+  let subtotal = 0;
+  data.items.forEach((item) => {
+    subtotal += item.amount;
+  });
+  data.subtotal = subtotal;
+  return subtotal;
+}
+// Total
+function getTotal() {
+  const tax = (data.subtotal * data.tax) / 100;
+  data.total = data.subtotal + tax;
+  return data.total; // Return data.total instead of total
+}
 </script>
 <template>
   <section class="invoice bg-light py-5">
@@ -34,7 +68,11 @@ const data = reactive({
           <div class="row">
             <div class="col-md-5">
               <Label>Sender</Label>
-              <input v-model="data.sender" type="text" class="form-control mb-3" />
+              <input
+                v-model="data.sender"
+                type="text"
+                class="form-control mb-3"
+              />
             </div>
           </div>
           <div class="row">
@@ -50,9 +88,13 @@ const data = reactive({
         </div>
         <div class="col-md-3">
           <h1>Invoice</h1>
-            <div class="mb-3">
-              <input v-model="data.invoiceNumber" type="text" class="form-control">
-            </div>
+          <div class="mb-3">
+            <input
+              v-model="data.invoiceNumber"
+              type="text"
+              class="form-control"
+            />
+          </div>
           <div class="input-group mb-3">
             <span
               class="input-group-text bg-transparent border-0"
@@ -74,7 +116,7 @@ const data = reactive({
               >Due Date</span
             >
             <input
-            v-model="data.dueDate"
+              v-model="data.dueDate"
               type="date"
               class="form-control rounded"
               aria-describedby="basic-addon1"
@@ -87,7 +129,7 @@ const data = reactive({
               >Additional Note</span
             >
             <input
-            v-model="data.additionalNote"
+              v-model="data.additionalNote"
               type="text"
               class="form-control rounded"
               aria-describedby="basic-addon1"
@@ -95,6 +137,8 @@ const data = reactive({
           </div>
         </div>
       </div>
+
+      <!-- items table -->
       <table class="table">
         <thead>
           <tr class="bg-light">
@@ -105,9 +149,10 @@ const data = reactive({
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr v-for="(item, index) in data.items" :key="index">
             <td>
               <input
+                v-model="item.description"
                 type="text"
                 class="form-control"
                 aria-describedby="basic-addon1"
@@ -116,47 +161,53 @@ const data = reactive({
             </td>
             <td>
               <input
-                type="text"
+                v-model="item.quantity"
+                type="number"
                 class="form-control"
                 aria-describedby="basic-addon1"
               />
             </td>
             <td>
               <input
-                type="text"
+                v-model="item.rate"
+                type="number"
                 class="form-control"
                 aria-describedby="basic-addon1"
               />
             </td>
-            <td>$0.00</td>
+            <td>${{ (item.amount = item.quantity * item.rate) }}</td>
           </tr>
         </tbody>
       </table>
-      <button class="btn btn-success ms-2">+ Line Add</button>
+      <button @click="addMoreItem()" class="btn btn-success ms-2">
+        + Line Add
+      </button>
 
-<div class="py-5">
-  <p>{{ data }}</p>
-</div>
+      <div class="py-5">
+        <p>{{ data }}</p>
+      </div>
 
       <div class="row">
         <div class="col-md-8">
           <div class="terms mt-5">
             <label for="">Notes</label>
             <textarea
-            v-model="data.notes"
+              v-model="data.notes"
               name="message"
               class="form-control w-75 mb-3"
               rows="2"
             ></textarea>
             <label for="">Terms</label>
             <textarea
-            v-model="data.terms"
+              v-model="data.terms"
               name="message"
               class="form-control w-75 mb-3"
               rows="2"
             ></textarea>
           </div>
         </div>
+
+        <!-- subtotal -->
         <div class="col-md-4">
           <table class="table sub-total">
             <tbody>
@@ -164,7 +215,9 @@ const data = reactive({
                 <th scope="col">SubTotal</th>
                 <td>
                   <input
-                    type="text"
+                    type="number"
+                    :value="getSubTotal()"
+                    readonly
                     class="form-control"
                     aria-describedby="basic-addon1"
                     placeholder="SubTotal"
@@ -175,7 +228,7 @@ const data = reactive({
                 <th scope="col">Tax</th>
                 <td>
                   <input
-                  v-model="data.tax"
+                    v-model="data.tax"
                     type="number"
                     class="form-control"
                     aria-describedby="basic-addon1"
@@ -187,14 +240,15 @@ const data = reactive({
                 <th scope="col">Total</th>
                 <td>
                   <input
-                    type="text"
+                    :value="getTotal()"
+                    type="number"
+                    readonly
                     class="form-control"
                     aria-describedby="basic-addon1"
                     placeholder="Total"
                   />
                 </td>
               </tr>
-             
             </tbody>
           </table>
         </div>
